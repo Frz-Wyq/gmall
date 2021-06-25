@@ -1,5 +1,6 @@
 package com.atguigu.gmall.pms.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -23,6 +24,24 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
                 new QueryWrapper<SpuEntity>()
         );
 
+        return new PageResultVo(page);
+    }
+
+    @Override
+    public PageResultVo querySpuByCidAndPage(PageParamVo pageParamVo, Long categoryId) {
+        QueryWrapper<SpuEntity> wrapper = new QueryWrapper<>();
+        //如果categoryId不为0，需要查询本类
+        if (categoryId != 0){
+            wrapper.eq("category_id",categoryId);
+        }
+        //关键字查询
+        String key = pageParamVo.getKey();
+        if (StringUtils.isNotBlank(key)){
+            //如果在wrapper后面直接写条件，条件之间默认是and关系，并且都没有()
+            //WHERE (category_id = ? AND (id = ? OR name LIKE ?))
+            wrapper.and(t->t.eq("id",key).or().like("name",key));
+        }
+        IPage<SpuEntity> page = this.page(pageParamVo.getPage(),wrapper);
         return new PageResultVo(page);
     }
 
