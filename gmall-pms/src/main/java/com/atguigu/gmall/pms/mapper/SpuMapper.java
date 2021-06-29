@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2021-06-22 21:49:42
  */
 @Mapper
+
 public interface SpuMapper extends BaseMapper<SpuEntity> {
 	
 }
